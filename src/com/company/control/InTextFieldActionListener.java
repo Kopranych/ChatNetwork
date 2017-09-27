@@ -7,11 +7,12 @@ import java.io.IOException;
 import com.company.model.ChatClient;
 import com.company.view.ChatWindow;
 
-public class InActionListener implements ActionListener {
+public class InTextFieldActionListener implements ActionListener {
     protected ChatClient chatClient;
     protected ChatWindow chatWindow;
 
-    public InActionListener(ChatClient chatClient) {
+
+    public InTextFieldActionListener(ChatClient chatClient) {
         this.chatClient = chatClient;
     }
 
@@ -22,6 +23,8 @@ public class InActionListener implements ActionListener {
             chatClient.outputStream.flush();
         } catch (IOException e1) {
             e1.printStackTrace();
+            chatWindow.isOn = false;
+
         }
         chatWindow.inTextField.setText("");
     }

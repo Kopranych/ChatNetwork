@@ -1,6 +1,6 @@
 package com.company.view;
 
-import com.company.control.InActionListener;
+import com.company.control.InTextFieldActionListener;
 import com.company.model.ChatClient;
 
 import javax.swing.*;
@@ -11,9 +11,9 @@ import java.io.IOException;
 
 public class ChatWindow extends JFrame {
     protected ChatClient chatClient;
-    protected JTextArea outTextArea;
+    public JTextArea outTextArea;
     public JTextField inTextField;
-    protected boolean isOn;
+    public static boolean isOn;
 
     public void setChatClient(ChatClient chatClient) {
         this.chatClient = chatClient;
@@ -28,7 +28,7 @@ public class ChatWindow extends JFrame {
         outTextArea.setEditable(false);
         container.add(BorderLayout.SOUTH, inTextField = new JTextField());
 
-        inTextField.addActionListener(new InActionListener(chatClient));
+        inTextField.addActionListener(new InTextFieldActionListener(chatClient));
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -51,8 +51,7 @@ public class ChatWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400,500);
         inTextField.requestFocus();
-
-
+        setVisible(true);
     }
 
 }
