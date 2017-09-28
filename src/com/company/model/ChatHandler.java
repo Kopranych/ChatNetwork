@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class ChatHandler extends Thread {
@@ -12,7 +13,7 @@ public class ChatHandler extends Thread {
     protected DataOutputStream dos;
     protected boolean isOn;
 
-    protected static List<ChatHandler> listHandler = Collections.synchronizedList(new ArrayList<>());
+    protected static List<ChatHandler> listHandlers = Collections.synchronizedList(new ArrayList<>());
 
     public ChatHandler(Socket socket) throws IOException {
         this.socket = socket;
@@ -22,12 +23,44 @@ public class ChatHandler extends Thread {
 
     public void run(){
         isOn = true;
-        listHandler.add(this);
+        listHandlers.add(this);
         while (isOn) {
             try {
-                dis.readUTF();
+                String message = dis.readUTF();
+                broadcast(message);
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally {
+                listHandlers.remove(this);
+                try {
+                    dos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    protected static void broadcast(String massage){
+        synchronized (listHandlers) {
+            Iterator<ChatHandler> iter = listHandlers.iterator();
+
+            while (iter.hasNext()){
+                ChatHandler c = iter.next();
+                try {
+                    synchronized (c.dos) {
+                        c.dos.writeUTF(massage);
+                    }
+                    c.dos.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    c.isOn = false;
+                }
             }
         }
     }

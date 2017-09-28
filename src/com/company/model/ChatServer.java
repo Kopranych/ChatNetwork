@@ -27,7 +27,7 @@ public class ChatServer extends JFrame {
 
     public static void main(String[] args) {
         try {
-            ChatServer superServer = new ChatServer(555);
+            ChatServer superServer = new ChatServer(8083);
         } catch (IOException e) {
             e.printStackTrace();
         }
