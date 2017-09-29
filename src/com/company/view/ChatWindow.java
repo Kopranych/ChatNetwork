@@ -51,7 +51,7 @@ public class ChatWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400,500);
         inTextField.requestFocus();
-        setVisible(true);
+
     }
 
 }

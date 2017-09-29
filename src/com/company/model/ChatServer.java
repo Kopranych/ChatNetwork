@@ -13,7 +13,7 @@ public class ChatServer extends JFrame {
 
             while (true){
                 Socket socket = service.accept();
-                System.out.println("Подключился клиент "+ socket.getInetAddress());
+                System.out.println("Подключился клиент "+ socket.getRemoteSocketAddress());
                 ChatHandler handler = new ChatHandler(socket);
                 handler.start();
             }
@@ -27,7 +27,7 @@ public class ChatServer extends JFrame {
 
     public static void main(String[] args) {
         try {
-            ChatServer superServer = new ChatServer(8083);
+            ChatServer superServer = new ChatServer(8082);
         } catch (IOException e) {
             e.printStackTrace();
         }

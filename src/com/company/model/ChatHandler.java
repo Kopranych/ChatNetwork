@@ -9,57 +9,62 @@ import java.util.List;
 
 public class ChatHandler extends Thread {
     protected Socket socket;
-    protected DataInputStream dis;
-    protected DataOutputStream dos;
+    protected InputStream dis;
+    protected OutputStream dos;
+    protected BufferedReader bufferedReaderInStream;
     protected boolean isOn;
 
     protected static List<ChatHandler> listHandlers = Collections.synchronizedList(new ArrayList<>());
 
     public ChatHandler(Socket socket) throws IOException {
         this.socket = socket;
-        dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-        dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        dis = socket.getInputStream();
+        bufferedReaderInStream = new BufferedReader(new InputStreamReader(dis));
+        dos = socket.getOutputStream();
     }
 
-    public void run(){
+    public void run() {
         isOn = true;
         listHandlers.add(this);
-        while (isOn) {
-            try {
-                String message = dis.readUTF();
+
+        try {
+            while (isOn) {
+                String message = bufferedReaderInStream.readLine();
+                System.out.println("получили сообщение: " + message);
                 broadcast(message);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            listHandlers.remove(this);
+            try {
+                dos.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
-                listHandlers.remove(this);
-                try {
-                    dos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            }
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+
     }
 
-    protected static void broadcast(String massage){
+    protected static void broadcast(String massage) {
         synchronized (listHandlers) {
             Iterator<ChatHandler> iter = listHandlers.iterator();
 
-            while (iter.hasNext()){
-                ChatHandler c = iter.next();
+            while (iter.hasNext()) {
+                ChatHandler client = iter.next();
                 try {
-                    synchronized (c.dos) {
-                        c.dos.writeUTF(massage);
+                    synchronized (client.dos) {
+                        client.dos.write((massage + "\n").getBytes());
                     }
-                    c.dos.flush();
+                    client.dos.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    c.isOn = false;
+                    client.isOn = false;
                 }
             }
         }

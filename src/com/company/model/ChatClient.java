@@ -28,7 +28,7 @@ public class ChatClient implements Runnable {
 
         while (chatWindow.isOn){
             try {
-                String line = inputStream.readUTF();
+                String line = String.valueOf(inputStream.readByte());
                 chatWindow.outTextArea.append(line + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
