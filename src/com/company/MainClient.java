@@ -1,8 +1,6 @@
 package com.company;
 
-import com.company.model.ChatClient;
 import com.company.model.ChatClientApp;
-import com.company.view.ChatWindow;
 
 import java.io.*;
 import java.net.Socket;

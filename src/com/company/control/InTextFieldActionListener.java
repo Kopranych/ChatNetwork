@@ -4,16 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import com.company.model.ChatClient;
+import com.company.model.test.ChatClientTest;
 import com.company.view.ChatWindow;
 
 public class InTextFieldActionListener implements ActionListener {
-    protected ChatClient chatClient;
+    protected ChatClientTest chatClient;
     protected ChatWindow chatWindow;
 
 
-    public InTextFieldActionListener(ChatClient chatClient) {
+    public InTextFieldActionListener(ChatClientTest chatClient, ChatWindow chatWindow) {
         this.chatClient = chatClient;
+        this.chatWindow = chatWindow;
     }
 
     @Override
