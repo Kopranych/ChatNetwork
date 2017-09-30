@@ -2,7 +2,7 @@ package com.company;
 
 import com.company.control.InTextFieldActionListener;
 import com.company.model.test.ChatClientTest;
-import com.company.view.ChatWindow;
+import com.company.view.ChatWindowTest;
 
 import java.io.*;
 import java.net.Socket;
@@ -11,7 +11,7 @@ public class MainTest {
 
     public static void main(String[] args) throws IOException {
         ChatClientTest chatClient;
-        ChatWindow chatWindow;
+        ChatWindowTest chatWindow;
         DataInputStream dis;
         DataOutputStream dos;
         InTextFieldActionListener inTextListener;
@@ -24,10 +24,9 @@ public class MainTest {
         dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         chatClient = new ChatClientTest(socket, dis, dos);
-        chatWindow = new ChatWindow("MyChat", dos);
+        chatWindow = new ChatWindowTest("MyChat", dos, socket);
         chatClient.setChatWindow(chatWindow);
-        chatWindow.setChatClient(chatClient);
-//        inTextListener = new InTextFieldActionListener(chatClient, chatWindow);
+
         chatWindow.setVisible(true);
 //            try {
 //                if (dos != null)

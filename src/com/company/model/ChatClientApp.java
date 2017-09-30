@@ -1,7 +1,5 @@
 package com.company.model;
 
-import com.company.view.ChatWindow;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

@@ -7,33 +7,54 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
-public class ChatWindow extends JFrame {
-    protected ChatClientTest chatClient;
+public class ChatWindowTest extends JFrame {
+
     public JTextArea outTextArea;
     public JTextField inTextField;
-    public DataOutputStream dataOutputStream;
+    protected JPanel panelOutput;
+    protected JButton buttonSend;
+    protected DataOutputStream dataOutputStream;
+    protected Socket socket;
     public static boolean isOn;
 
-    public void setChatClient(ChatClientTest chatClient) {
-        this.chatClient = chatClient;
-    }
 
-    public ChatWindow(String title, DataOutputStream dos) {
+
+    public ChatWindowTest(String title, DataOutputStream dos, Socket socket) {
         super(title);
         dataOutputStream = dos;
+        this.socket = socket;
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
         container.add(BorderLayout.CENTER, outTextArea = new JTextArea());
         outTextArea.setEditable(false);
-        container.add(BorderLayout.SOUTH, inTextField = new JTextField());
+        panelOutput = new JPanel();
+        panelOutput.setLayout(new GridLayout(1,1));
+        panelOutput.add(inTextField = new JTextField());
+        panelOutput.add(buttonSend = new JButton("Send"));
+        container.add(BorderLayout.SOUTH, panelOutput);
+
+        buttonSend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    dataOutputStream.writeUTF(inTextField.getText());
+                    dataOutputStream.flush();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                    isOn = false;
+                }
+                inTextField.setText("");
+            }
+        });
 
         inTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    chatClient.outputStream.writeUTF(inTextField.getText());
-                    chatClient.outputStream.flush();
+                    dataOutputStream.writeUTF(inTextField.getText());
+                    dataOutputStream.flush();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                     isOn = false;
@@ -52,7 +73,7 @@ public class ChatWindow extends JFrame {
                     e1.printStackTrace();
                 }
                 try {
-                    chatClient.socket.close();
+                    socket.close();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -61,6 +82,7 @@ public class ChatWindow extends JFrame {
         });
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         setSize(400,500);
         inTextField.requestFocus();
 

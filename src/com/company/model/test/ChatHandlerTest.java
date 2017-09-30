@@ -23,7 +23,7 @@ public class ChatHandlerTest extends Thread {
 
     public void run() {
         isOn = true;
-        if (listHandlers.size() > 2) {
+        if (listHandlers.size() == 2) {
             System.out.println("Превышен лимит подключения");
 
             try {

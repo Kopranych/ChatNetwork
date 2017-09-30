@@ -1,17 +1,17 @@
 package com.company.model.test;
 
-import com.company.view.ChatWindow;
+import com.company.view.ChatWindowTest;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ChatClientTest implements Runnable {
-    public ChatWindow chatWindow;
+    public ChatWindowTest chatWindow;
     public Socket socket;
     private DataInputStream inputStream;
     public DataOutputStream outputStream;
 
-    public void setChatWindow(ChatWindow chatWindow) {
+    public void setChatWindow(ChatWindowTest chatWindow) {
         this.chatWindow = chatWindow;
     }
 
@@ -30,11 +30,12 @@ public class ChatClientTest implements Runnable {
             while (chatWindow.isOn) {
                 String line = inputStream.readUTF();
                 System.out.println("Пришло с сервера " + line);
-                if(line.equals("exceeded connection limit")){
-                    outputStream.close();
-                    socket.close();
-                    chatWindow.isOn = false;
-                }
+//                if(line.equals("exceeded connection limit")){
+//                    outputStream.close();
+//                    socket.close();
+//                    chatWindow.isOn = false;
+//                    System.exit(0);
+//                }
                 chatWindow.outTextArea.append(line + "\n");
             }
         } catch (IOException e) {
