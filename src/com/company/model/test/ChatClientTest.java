@@ -37,6 +37,7 @@ public class ChatClientTest implements Runnable {
 //                    System.exit(0);
 //                }
                 chatWindow.outTextArea.append(line + "\n");
+                chatWindow.outTextArea.setCaretPosition(chatWindow.outTextArea.getDocument().getLength());
             }
         } catch (IOException e) {
             e.printStackTrace();

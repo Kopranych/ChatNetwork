@@ -19,15 +19,20 @@ public class MainTest {
 //      if(args.length!=2){
 //          throw   new RuntimeException("Введите: <адресс сервера> <номер порта>");
 //      }
-
-        Socket socket = new Socket("127.0.0.1", 8082);
+        chatWindow = new ChatWindowTest("MyChat");
+        chatWindow.setVisible(true);
+//        while(!chatWindow.isGetPotr);
+        System.out.println("Connected");
+        Socket socket = new Socket(chatWindow.adressIP, chatWindow.port);
         dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        chatWindow.setSocket(socket);
+        chatWindow.setDataOutputStream(dos);
         chatClient = new ChatClientTest(socket, dis, dos);
-        chatWindow = new ChatWindowTest("MyChat", dos, socket);
+
         chatClient.setChatWindow(chatWindow);
 
-        chatWindow.setVisible(true);
+
 //            try {
 //                if (dos != null)
 //                    dos.close();
