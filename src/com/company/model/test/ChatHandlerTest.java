@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ChatHandlerTest extends Thread {
     protected Socket socket;
+    protected Message message;
     protected DataInputStream dis;
     protected DataOutputStream dos;
     public static int countClient = 1;
@@ -37,6 +38,7 @@ public class ChatHandlerTest extends Thread {
         } else {
 
             listHandlers.add(this);
+
             ++countClient;
 
             try {
