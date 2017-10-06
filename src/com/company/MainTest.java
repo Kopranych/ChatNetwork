@@ -21,7 +21,7 @@ public class MainTest {
 //      }
         chatWindow = new ChatWindowTest("MyChat");
         chatWindow.setVisible(true);
-//        while(!chatWindow.isGetPotr);
+        while(!chatWindow.isGetPotr);
         System.out.println("Connected");
         Socket socket = new Socket(chatWindow.adressIP, chatWindow.port);
         dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));

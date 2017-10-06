@@ -23,10 +23,10 @@ public class ChatWindowTest extends JFrame {
     protected DataOutputStream dataOutputStream;
     protected Socket socket;
     public static boolean isOn;
-    public static String adressIP = "127.0.0.1";
-    public static int port = 8082;
-    public static boolean isGetIP = false;
-    public static boolean isGetPotr = false;
+    public static String adressIP;
+    public static int port;
+    public static volatile boolean isGetIP = false;
+    public static volatile boolean isGetPotr = false;
 
     public void setSocket(Socket socket) {
         this.socket = socket;
@@ -63,6 +63,7 @@ public class ChatWindowTest extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 adressIP = textIP.getText();
+                if(adressIP.equals("127.0.0.1"))
                 isGetIP = true;
                 textIP.setText("");
             }
@@ -71,6 +72,7 @@ public class ChatWindowTest extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 port = Integer.parseInt(textPort.getText());
+                if(port == 8082)
                 isGetPotr = true;
                 textPort.setText("");
             }

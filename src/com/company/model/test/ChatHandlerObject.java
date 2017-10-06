@@ -7,66 +7,79 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class ChatHandlerTest extends Thread {
-    protected Socket socket;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+public class ChatHandlerObject extends ChatHandlerTest {
+    private Message message;
+    private Socket socket;
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
+    private String login;
     public static int countClient = 1;
     protected boolean isOn;
+    protected static List<ChatHandlerObject> listClient = Collections.synchronizedList(new ArrayList<>());
 
-    private static List<ChatHandlerTest> listHandlers = Collections.synchronizedList(new ArrayList<>());
-
-    public ChatHandlerTest(Socket socket) throws IOException {
+    public ChatHandlerObject(Socket socket) throws IOException {
+        super(socket);
         this.socket = socket;
-        dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-        dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        inputStream = new ObjectInputStream(socket.getInputStream());
     }
 
+    @Override
     public void run() {
+        try {
+            message = (Message) inputStream.readObject();
+            login = message.getLogin();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         isOn = true;
-        if (listHandlers.size() == 2) {
+        if (listClient.size() == 2) {
             System.out.println("Превышен лимит подключения");
 
             try {
-                dos.writeUTF("exceeded connection limit");
-                dos.close();
+                message.setMessage("exceeded connection limit");
+                outputStream.writeObject(message);
+                outputStream.close();
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
 
-            listHandlers.add(this);
+            listClient.add(this);
 
             ++countClient;
 
             try {
                 while (isOn) {
-                    String massage = dis.readUTF();
-                    System.out.println("получили сообщение: " + massage);
-                    String validate = validateForbiddenWords(massage);
+                    String message = this.message.getMessage();
+                    System.out.println("получили сообщение: " + message);
+                    String validate = validateForbiddenWords(message);
 
                     if (!(validate.equals("Ok"))) {
                         System.out.println("Недопустимое высказывание " + validate + "\n" +
                                 "Прощайте!"
                         );
-                        dos.writeUTF("Недопустимое высказывание " + validate + "\n" +
+                        this.message.setMessage("Недопустимое высказывание " + validate + "\n" +
                                 "Прощайте!");
-                        listHandlers.remove(this);
+                        outputStream.writeObject(message);
+                        outputStream.close();
+                        listClient.remove(this);
                         countClient--;
-                        dos.close();
                         socket.close();
                         isOn = false;
                     } else
-                        broadcast(massage);
+                        broadcast(this.message);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                listHandlers.remove(this);
+                listClient.remove(this);
                 countClient--;
                 try {
-                    dos.close();
+                    outputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -81,7 +94,6 @@ public class ChatHandlerTest extends Thread {
 
     private String validateForbiddenWords(String massage) throws IOException {
         String[] tempMassage = massage.split(" ");
-        ArrayList<String> tempMassegeList = new ArrayList<String>();
 
         BufferedReader readerFile = new BufferedReader(new FileReader
                 ("C:\\JavaDevelopment\\Chat\\src\\com\\company\\model\\test\\forbidden_words.txt"));
@@ -102,17 +114,17 @@ public class ChatHandlerTest extends Thread {
         return "Ok";
     }
 
-    protected static void broadcast(String massage) {
-        synchronized (listHandlers) {
-            Iterator<ChatHandlerTest> iter = listHandlers.iterator();
+    protected static void broadcast(Message message) {
+        synchronized (listClient) {
+            Iterator<ChatHandlerObject> iter = listClient.iterator();
 
             while (iter.hasNext()) {
-                ChatHandlerTest client = iter.next();
+                ChatHandlerObject client = iter.next();
                 try {
-                    synchronized (client.dos) {
-                        client.dos.writeUTF(massage);
+                    synchronized (client.outputStream) {
+                        client.outputStream.writeObject(message);
                     }
-                    client.dos.flush();
+                    client.outputStream.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                     client.isOn = false;
