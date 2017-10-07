@@ -29,7 +29,7 @@ public class ChatServerTest extends JFrame {
             while (true){
                 Socket socket = service.accept();
                 System.out.println("Подключился клиент "+ socket.getRemoteSocketAddress());
-                ChatHandlerTest handler = new ChatHandlerTest(socket);
+                ChatHandlerObject handler = new ChatHandlerObject(socket);
                 handler.start();
                 textAmountClient.setText(Integer.toString(ChatHandlerTest.countClient));
             }

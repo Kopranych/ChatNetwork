@@ -13,6 +13,7 @@ public class ChatHandlerObject extends ChatHandlerTest {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private String login;
+    private String time;
     public static int countClient = 1;
     protected boolean isOn;
     protected static List<ChatHandlerObject> listClient = Collections.synchronizedList(new ArrayList<>());
@@ -26,14 +27,6 @@ public class ChatHandlerObject extends ChatHandlerTest {
 
     @Override
     public void run() {
-        try {
-            message = (Message) inputStream.readObject();
-            login = message.getLogin();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
         isOn = true;
         if (listClient.size() == 2) {
             System.out.println("Превышен лимит подключения");
@@ -54,8 +47,10 @@ public class ChatHandlerObject extends ChatHandlerTest {
 
             try {
                 while (isOn) {
+                    message = (Message) inputStream.readObject();
+                    login = message.getLogin();
                     String message = this.message.getMessage();
-                    System.out.println("получили сообщение: " + message);
+                    System.out.println(this.message.getTime()+ "От клиента " + login + " получили сообщение: " + message);
                     String validate = validateForbiddenWords(message);
 
                     if (!(validate.equals("Ok"))) {
@@ -75,6 +70,8 @@ public class ChatHandlerObject extends ChatHandlerTest {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             } finally {
                 listClient.remove(this);
                 countClient--;
@@ -91,6 +88,7 @@ public class ChatHandlerObject extends ChatHandlerTest {
             }
         }
     }
+
 
     private String validateForbiddenWords(String massage) throws IOException {
         String[] tempMassage = massage.split(" ");

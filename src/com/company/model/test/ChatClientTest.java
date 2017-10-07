@@ -1,12 +1,12 @@
 package com.company.model.test;
 
-import com.company.view.ChatWindowTest;
+import com.company.view.test.ChatWindowTest;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ChatClientTest implements Runnable {
-    public ChatWindowTest chatWindow;
+    private ChatWindowTest chatWindow;
     public Socket socket;
     private DataInputStream inputStream;
     public DataOutputStream outputStream;
@@ -15,10 +15,10 @@ public class ChatClientTest implements Runnable {
         this.chatWindow = chatWindow;
     }
 
-    public ChatClientTest(Socket s, DataInputStream dis, DataOutputStream dos) {
+    public ChatClientTest(Socket s) throws IOException {
         socket = s;
-        inputStream = dis;
-        outputStream = dos;
+        inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        outputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         (new Thread(this)).start();
     }
 

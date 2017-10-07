@@ -1,42 +1,28 @@
-package com.company.view;
+package com.company.view.test;
 
-import com.company.model.test.ChatClientTest;
+import com.company.model.test.ChatClientObject;
+import com.company.model.test.Message;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.DataOutputStream;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.net.Socket;
 
-public class ChatWindowTest extends JFrame {
+public class ChatWindowObject extends ChatWindowTest{
+    private JPanel upPanel;
+    private JPanel login;
+    private JLabel name;
+    private JTextField enterName;
+    private ChatClientObject clientObject;
 
-    public JTextArea outTextArea;
-    public JTextField inTextField;
-    private JTextField textIP;
-    private JTextField textPort;
-    private JLabel labelIP;
-    private JLabel labelPort;
-    protected JPanel panelOutput;
-    protected JPanel panelIPadress;
-    protected JButton buttonSend;
-    protected DataOutputStream dataOutputStream;
-    protected Socket socket;
-    public static boolean isOn;
-    public static String adressIP;
-    public static int port;
-    public static volatile boolean isGetIP = false;
-    public static volatile boolean isGetPotr = false;
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
+    public void setClientObject(ChatClientObject clientObject) {
+        this.clientObject = clientObject;
     }
 
-    public void setDataOutputStream(DataOutputStream dataOutputStream) {
-        this.dataOutputStream = dataOutputStream;
-    }
-
-    public ChatWindowTest(String title) {
+    public ChatWindowObject(String title ) {
         super(title);
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
@@ -57,14 +43,31 @@ public class ChatWindowTest extends JFrame {
         panelIPadress.add(textIP = new JTextField());
         panelIPadress.add(labelPort);
         panelIPadress.add(textPort = new JTextField());
-        container.add(BorderLayout.NORTH, panelIPadress);
+
+        name = new JLabel("LogIn");
+        login = new JPanel(new GridLayout(1,2));
+        login.add(name);
+        login.add(enterName = new JTextField());
+
+        upPanel = new JPanel(new GridLayout(2,1));
+        upPanel.add(panelIPadress);
+        upPanel.add(login);
+        container.add(BorderLayout.NORTH, upPanel);
+
+        enterName.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clientObject.getMessage().setLogin(enterName.getText());
+                enterName.setText("");
+            }
+        });
 
         textIP.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 adressIP = textIP.getText();
                 if(adressIP.equals("127.0.0.1"))
-                isGetIP = true;
+                    isGetIP = true;
                 textIP.setText("");
             }
         });
@@ -73,7 +76,7 @@ public class ChatWindowTest extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 port = Integer.parseInt(textPort.getText());
                 if(port == 8082)
-                isGetPotr = true;
+                    isGetPotr = true;
                 textPort.setText("");
             }
         });
@@ -83,8 +86,9 @@ public class ChatWindowTest extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dataOutputStream.writeUTF(inTextField.getText());
-                    dataOutputStream.flush();
+                    clientObject.getMessage().setMessage(inTextField.getText());
+                    clientObject.getOutputStream().writeObject(clientObject.getMessage());
+                    clientObject.getOutputStream().flush();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                     isOn = false;
@@ -97,8 +101,9 @@ public class ChatWindowTest extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dataOutputStream.writeUTF(inTextField.getText());
-                    dataOutputStream.flush();
+                    clientObject.getMessage().setMessage(inTextField.getText());
+                    clientObject.getOutputStream().writeObject(clientObject.getMessage());
+                    clientObject.getOutputStream().flush();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                     isOn = false;
@@ -112,7 +117,7 @@ public class ChatWindowTest extends JFrame {
             public void windowClosed(WindowEvent e) {
                 isOn = false;
                 try {
-                    dataOutputStream.close();
+                    clientObject.getOutputStream().close();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -131,5 +136,4 @@ public class ChatWindowTest extends JFrame {
         inTextField.requestFocus();
 
     }
-
 }

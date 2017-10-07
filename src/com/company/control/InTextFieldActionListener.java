@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import com.company.model.test.ChatClientTest;
-import com.company.view.ChatWindowTest;
+import com.company.view.test.ChatWindowTest;
 
 public class InTextFieldActionListener implements ActionListener {
     protected ChatClientTest chatClient;
