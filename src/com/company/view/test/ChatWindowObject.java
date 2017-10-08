@@ -57,6 +57,7 @@ public class ChatWindowObject extends ChatWindowTest{
         enterName.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Вводим имя");
                 clientObject.getMessage().setLogin(enterName.getText());
                 enterName.setText("");
             }

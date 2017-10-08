@@ -1,7 +1,5 @@
 package com.company.view.test;
 
-import com.company.model.test.ChatClientTest;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -20,13 +18,20 @@ public class ChatWindowTest extends JFrame {
     protected JPanel panelOutput;
     protected JPanel panelIPadress;
     protected JButton buttonSend;
+    private JPanel upPanel;
+    private JPanel login;
+    private JLabel name;
+    private JTextField enterName;
+    private JTextArea nameArea;
+
     private DataOutputStream dataOutputStream;
     protected Socket socket;
     public static boolean isOn;
-    public static String adressIP;
-    public static int port;
+    public static String adressIP; //= "127.0.0.1";
+    public static int port; //= 8082;
     public static volatile boolean isGetIP = false;
     public static volatile boolean isGetPotr = false;
+    private String nameLogin;
 
     public void setSocket(Socket socket) {
         this.socket = socket;
@@ -57,23 +62,35 @@ public class ChatWindowTest extends JFrame {
         panelIPadress.add(textIP = new JTextField());
         panelIPadress.add(labelPort);
         panelIPadress.add(textPort = new JTextField());
-        container.add(BorderLayout.NORTH, panelIPadress);
+
+        name = new JLabel("LogIn");
+        login = new JPanel(new GridLayout(1, 3));
+        login.add(name);
+        login.add(nameArea = new JTextArea());
+        nameArea.setEditable(false);
+        login.add(enterName = new JTextField());
+
+        upPanel = new JPanel(new GridLayout(2, 1));
+        upPanel.add(panelIPadress);
+        upPanel.add(login);
+        container.add(BorderLayout.NORTH, upPanel);
 
         textIP.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 adressIP = textIP.getText();
-                if(adressIP.equals("127.0.0.1"))
-                isGetIP = true;
+                if (adressIP.equals("127.0.0.1"))
+                    isGetIP = true;
                 textIP.setText("");
             }
         });
+
         textPort.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 port = Integer.parseInt(textPort.getText());
-                if(port == 8082)
-                isGetPotr = true;
+                if (port == 8082)
+                    isGetPotr = true;
                 textPort.setText("");
             }
         });
@@ -83,13 +100,32 @@ public class ChatWindowTest extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dataOutputStream.writeUTF(inTextField.getText());
-                    dataOutputStream.flush();
+                    if (nameLogin == null) {
+                        outTextArea.append("Ввеите свое имя \n");
+                        outTextArea.setCaretPosition(outTextArea.getDocument().getLength());
+                    } else {
+                        dataOutputStream.writeUTF(nameLogin + " : " + inTextField.getText());
+                        dataOutputStream.flush();
+                    }
                 } catch (IOException e1) {
                     e1.printStackTrace();
                     isOn = false;
+                }catch (NullPointerException e2){
+                    if(dataOutputStream == null){
+                        outTextArea.append("Установите соединение \n");
+                        outTextArea.setCaretPosition(outTextArea.getDocument().getLength());
+                    }
                 }
                 inTextField.setText("");
+            }
+        });
+
+        enterName.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nameLogin = enterName.getText();
+                enterName.setText("");
+                nameArea.setText(nameLogin);
             }
         });
 
@@ -97,11 +133,21 @@ public class ChatWindowTest extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dataOutputStream.writeUTF(inTextField.getText());
-                    dataOutputStream.flush();
+                    if (nameLogin == null) {
+                        outTextArea.append("Ввеите свое имя \n");
+                        outTextArea.setCaretPosition(outTextArea.getDocument().getLength());
+                    } else {
+                        dataOutputStream.writeUTF(nameLogin + " : " + inTextField.getText());
+                        dataOutputStream.flush();
+                    }
                 } catch (IOException e1) {
                     e1.printStackTrace();
                     isOn = false;
+                }catch (NullPointerException e2){
+                    if(dataOutputStream == null){
+                        outTextArea.append("Установите соединение \n");
+                        outTextArea.setCaretPosition(outTextArea.getDocument().getLength());
+                    }
                 }
                 inTextField.setText("");
             }

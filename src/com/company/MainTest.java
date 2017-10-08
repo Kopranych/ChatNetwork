@@ -12,20 +12,17 @@ import java.net.Socket;
 public class MainTest {
 
     public static void main(String[] args) throws IOException {
-        ChatClientObject chatClient;
-        ChatWindowObject chatWindow;
+        ChatClientTest chatClient;
+        ChatWindowTest chatWindow;
 
-//      if(args.length!=2){
-//          throw   new RuntimeException("Введите: <адресс сервера> <номер порта>");
-//      }
-        chatWindow = new ChatWindowObject("MyChat");
+        chatWindow = new ChatWindowTest("MyChat");
         chatWindow.setVisible(true);
         while(!chatWindow.isGetPotr);
-        System.out.println("Connected");
         Socket socket = new Socket(chatWindow.adressIP, chatWindow.port);
-        chatClient = new ChatClientObject(socket);
-        chatClient.setWindowObject(chatWindow);
-        chatWindow.setClientObject(chatClient);
+        System.out.println("Connected");
+        chatClient = new ChatClientTest(socket);
+        chatClient.setChatWindow(chatWindow);
+        chatWindow.setDataOutputStream(new DataOutputStream(new BufferedOutputStream(socket.getOutputStream())));
         chatWindow.setSocket(socket);
 
 //            try {

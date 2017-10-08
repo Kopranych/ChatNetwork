@@ -11,6 +11,7 @@ public class ChatClientTest implements Runnable {
     private DataInputStream inputStream;
     public DataOutputStream outputStream;
 
+
     public void setChatWindow(ChatWindowTest chatWindow) {
         this.chatWindow = chatWindow;
     }
