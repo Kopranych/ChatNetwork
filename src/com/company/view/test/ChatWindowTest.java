@@ -23,6 +23,7 @@ public class ChatWindowTest extends JFrame {
     private JLabel name;
     private JTextField enterName;
     private JTextArea nameArea;
+    private JScrollPane scrollOutArea;
 
     private DataOutputStream dataOutputStream;
     protected Socket socket;
@@ -45,7 +46,8 @@ public class ChatWindowTest extends JFrame {
         super(title);
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
-        container.add(BorderLayout.CENTER, outTextArea = new JTextArea());
+        scrollOutArea = new JScrollPane(outTextArea = new JTextArea());
+        container.add(BorderLayout.CENTER, scrollOutArea);
         outTextArea.setEditable(false);
 
         panelOutput = new JPanel();

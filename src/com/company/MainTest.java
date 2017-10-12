@@ -5,13 +5,20 @@ import com.company.model.test.ChatClientObject;
 import com.company.model.test.ChatClientTest;
 import com.company.view.test.ChatWindowObject;
 import com.company.view.test.ChatWindowTest;
+import com.jtattoo.plaf.texture.TextureLookAndFeel;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
 public class MainTest {
 
     public static void main(String[] args) throws IOException {
+        try {
+            UIManager.setLookAndFeel(new TextureLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         ChatClientTest chatClient;
         ChatWindowTest chatWindow;
 
